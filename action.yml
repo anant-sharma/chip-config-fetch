@@ -5,6 +5,10 @@ inputs:
   access_token:
     description: "Github Access Token"
     required: true
+  deploy:
+    description: "Should Deploy"
+    required: false
+    default: "0"
 outputs:
   DOCKER_USER:
     description: "Part of Config"

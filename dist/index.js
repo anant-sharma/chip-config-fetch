@@ -860,10 +860,14 @@ function run() {
         try {
             const REPOSITORY = process.env.GITHUB_REPOSITORY || '';
             const ACCESS_TOKEN = core.getInput('access_token');
+            const deploy = +core.getInput('deploy');
             // Authenticate With Config Service
             const configSvcToken = yield configServiceAuth(ACCESS_TOKEN);
             // Fetch Repository Config
             const config = yield getRepoConfig(REPOSITORY, configSvcToken);
+            if (deploy) {
+                yield deployService(config);
+            }
             for (const key in config) {
                 core.debug(`${key}: ${config[key]}`);
                 core.setOutput(key, `${config[key]}`);
@@ -905,6 +909,74 @@ function getRepoConfig(repo, configServiceToken) {
             return Promise.reject(new Error('Unable to fetch repo config'));
         }
         return data;
+    });
+}
+function deployService(config) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const cAxios = axios_1.default.create({
+            baseURL: `${config.CLUSTER_API_URL}/endpoints/1/docker`,
+            headers: {
+                Authorization: `Bearer ${config.CLUSTER_AUTH_TOKEN}`
+            }
+        });
+        try {
+            // Pull New Image
+            yield cAxios({
+                method: 'post',
+                url: '/images/create',
+                params: {
+                    fromImage: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}`,
+                    tag: config.TAG
+                },
+                data: {}
+            });
+            // Remove Old Image
+            yield cAxios({
+                method: 'delete',
+                url: `/containers/${config.CLUSTER_CONTAINER_NAME}`,
+                params: {
+                    v: true,
+                    force: true
+                },
+                data: {}
+            });
+            // Create New Container
+            yield cAxios({
+                method: 'post',
+                url: `/containers/create`,
+                params: {},
+                data: {
+                    Image: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}:${config.TAG}`,
+                    ExposedPorts: {
+                        '8080/tcp': {}
+                    },
+                    HostConfig: {
+                        PortBindings: {
+                            '8080/tcp': [
+                                {
+                                    HostPort: `${config.HOST_PORT}`
+                                }
+                            ]
+                        },
+                        PublishAllPorts: true,
+                        AutoRemove: true,
+                        NetworkMode: 'bridge'
+                    },
+                    name: config.CLUSTER_CONTAINER_NAME
+                }
+            });
+            // Start New Container
+            yield cAxios({
+                method: 'post',
+                url: `/containers/${config.CLUSTER_CONTAINER_NAME}/start`,
+                params: {},
+                data: {}
+            });
+            return;
+        }
+        catch (e) {
+            return Promise.reject(e);
+        }
     });
 }
 run();

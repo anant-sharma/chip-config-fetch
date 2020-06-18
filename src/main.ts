@@ -19,12 +19,17 @@ async function run(): Promise<void> {
   try {
     const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
     const ACCESS_TOKEN = core.getInput('access_token')
+    const deploy = +core.getInput('deploy')
 
     // Authenticate With Config Service
     const configSvcToken = await configServiceAuth(ACCESS_TOKEN)
 
     // Fetch Repository Config
     const config: IConfig = await getRepoConfig(REPOSITORY, configSvcToken)
+
+    if (deploy) {
+      await deployService(config)
+    }
 
     for (const key in config) {
       core.debug(`${key}: ${config[key]}`)
@@ -74,6 +79,77 @@ async function getRepoConfig(
   }
 
   return data
+}
+
+async function deployService(config: IConfig): Promise<void> {
+  const cAxios = axios.create({
+    baseURL: `${config.CLUSTER_API_URL}/endpoints/1/docker`,
+    headers: {
+      Authorization: `Bearer ${config.CLUSTER_AUTH_TOKEN}`
+    }
+  })
+
+  try {
+    // Pull New Image
+    await cAxios({
+      method: 'post',
+      url: '/images/create',
+      params: {
+        fromImage: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}`,
+        tag: config.TAG
+      },
+      data: {}
+    })
+
+    // Remove Old Image
+    await cAxios({
+      method: 'delete',
+      url: `/containers/${config.CLUSTER_CONTAINER_NAME}`,
+      params: {
+        v: true,
+        force: true
+      },
+      data: {}
+    })
+
+    // Create New Container
+    await cAxios({
+      method: 'post',
+      url: `/containers/create`,
+      params: {},
+      data: {
+        Image: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}:${config.TAG}`,
+        ExposedPorts: {
+          '8080/tcp': {}
+        },
+        HostConfig: {
+          PortBindings: {
+            '8080/tcp': [
+              {
+                HostPort: `${config.HOST_PORT}`
+              }
+            ]
+          },
+          PublishAllPorts: true,
+          AutoRemove: true,
+          NetworkMode: 'bridge'
+        },
+        name: config.CLUSTER_CONTAINER_NAME
+      }
+    })
+
+    // Start New Container
+    await cAxios({
+      method: 'post',
+      url: `/containers/${config.CLUSTER_CONTAINER_NAME}/start`,
+      params: {},
+      data: {}
+    })
+
+    return
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 run()

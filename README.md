@@ -4,13 +4,13 @@ This action authenticates workflow and fetch deployment config
 
 ## Inputs
 
-### `REPOSITORY`
-
-**Required** The name of repository for which config needs to be fetched. For instance `anant-sharma/chip-config-fetch` (env.GITHUB_REPOSITORY)
-
-### `ACCESS_TOKEN`
+### `access_token`
 
 **Required** Github Personal Access Token to authenticate service.
+
+### `deploy`
+
+**Required** "1" If deployment is required. Default 0.
 
 ## Outputs
 
@@ -21,10 +21,9 @@ Repository config
 ## Example usage
 
 ```
-uses: actions/chip-config-fetch@v1
+uses: anant-sharma/chip-config-fetch@v1.2
 id: configfetch
 with:
-  REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 ```
 
