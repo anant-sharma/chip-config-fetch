@@ -941,7 +941,7 @@ function deployService(config) {
                     force: true
                 },
                 data: {}
-            });
+            }).catch(() => { });
             core.debug('Remove Old Complete');
             // Create New Container
             yield cAxios({

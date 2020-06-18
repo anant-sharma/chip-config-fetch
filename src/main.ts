@@ -112,7 +112,7 @@ async function deployService(config: IConfig): Promise<void> {
         force: true
       },
       data: {}
-    })
+    }).catch(() => {})
     core.debug('Remove Old Complete')
 
     // Create New Container
