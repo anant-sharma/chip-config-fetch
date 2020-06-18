@@ -1,10 +1,29 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: "Fetch Service Config"
+description: "Action to fetch Service Config from Config Service"
+author: "Anant Sharma"
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  access_token:
+    description: "Github Access Token"
+    required: true
+outputs:
+  DOCKER_USER:
+    description: "Part of Config"
+  DOCKER_PASS:
+    description: "Part of Config"
+  DOCKER_IMAGE_NAME:
+    description: "Part of Config"
+  TAG:
+    description: "Part of Config"
+  CLUSTER_API_URL:
+    description: "Part of Config"
+  CLUSTER_AUTH_TOKEN:
+    description: "Part of Config"
+  CLUSTER_CONTAINER_NAME:
+    description: "Part of Config"
+  HOST_PORT:
+    description: "Part of Config"
+  SLACK_WEBHOOK:
+    description: "Part of Config"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
