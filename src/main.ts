@@ -116,7 +116,9 @@ async function deployService(config: IConfig): Promise<void> {
     await cAxios({
       method: 'post',
       url: `/containers/create`,
-      params: {},
+      params: {
+        name: config.CLUSTER_CONTAINER_NAME
+      },
       data: {
         Image: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}:${config.TAG}`,
         ExposedPorts: {
