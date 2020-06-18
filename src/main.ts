@@ -17,7 +17,8 @@ interface IConfig {
 
 async function run(): Promise<void> {
   try {
-    const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
+    // const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
+    const REPOSITORY = 'anant-sharma/auth-service'
     const ACCESS_TOKEN = core.getInput('access_token')
     const deploy = +core.getInput('deploy')
 
@@ -100,6 +101,7 @@ async function deployService(config: IConfig): Promise<void> {
       },
       data: {}
     })
+    core.debug('Image Pull Complete')
 
     // Remove Old Image
     await cAxios({
@@ -111,6 +113,7 @@ async function deployService(config: IConfig): Promise<void> {
       },
       data: {}
     })
+    core.debug('Remove Old Complete')
 
     // Create New Container
     await cAxios({
@@ -139,6 +142,7 @@ async function deployService(config: IConfig): Promise<void> {
         name: config.CLUSTER_CONTAINER_NAME
       }
     })
+    core.debug('Create New Complete')
 
     // Start New Container
     await cAxios({
@@ -147,6 +151,7 @@ async function deployService(config: IConfig): Promise<void> {
       params: {},
       data: {}
     })
+    core.debug('Start New Complete')
 
     return
   } catch (e) {

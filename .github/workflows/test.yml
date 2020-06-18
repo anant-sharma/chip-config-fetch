@@ -23,3 +23,9 @@ jobs:
         id: configfetch
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
+      - name: Config Deploy
+        uses: ./
+        id: configfetch
+        with:
+          access_token: ${{ secrets.ACCESS_TOKEN }}
+          deploy: "1"

@@ -858,7 +858,8 @@ const axios_1 = __importDefault(__webpack_require__(53));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const REPOSITORY = process.env.GITHUB_REPOSITORY || '';
+            // const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
+            const REPOSITORY = 'anant-sharma/auth-service';
             const ACCESS_TOKEN = core.getInput('access_token');
             const deploy = +core.getInput('deploy');
             // Authenticate With Config Service
@@ -930,6 +931,7 @@ function deployService(config) {
                 },
                 data: {}
             });
+            core.debug('Image Pull Complete');
             // Remove Old Image
             yield cAxios({
                 method: 'delete',
@@ -940,6 +942,7 @@ function deployService(config) {
                 },
                 data: {}
             });
+            core.debug('Remove Old Complete');
             // Create New Container
             yield cAxios({
                 method: 'post',
@@ -967,6 +970,7 @@ function deployService(config) {
                     name: config.CLUSTER_CONTAINER_NAME
                 }
             });
+            core.debug('Create New Complete');
             // Start New Container
             yield cAxios({
                 method: 'post',
@@ -974,6 +978,7 @@ function deployService(config) {
                 params: {},
                 data: {}
             });
+            core.debug('Start New Complete');
             return;
         }
         catch (e) {
