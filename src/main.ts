@@ -10,9 +10,12 @@ interface IConfig {
   CLUSTER_API_URL: string
   CLUSTER_AUTH_TOKEN: string
   CLUSTER_CONTAINER_NAME: string
-  HOST_PORT: string
+  PORTS: {
+    host: string
+    container: string
+  }[]
   SLACK_WEBHOOK: string
-  [key: string]: string
+  [key: string]: string | Object[]
 }
 
 async function run(): Promise<void> {
@@ -124,17 +127,25 @@ async function deployService(config: IConfig): Promise<void> {
       },
       data: {
         Image: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}:${config.TAG}`,
-        ExposedPorts: {
-          '8080/tcp': {}
-        },
-        HostConfig: {
-          PortBindings: {
-            '8080/tcp': [
-              {
-                HostPort: `${config.HOST_PORT}`
-              }
-            ]
+        ExposedPorts: config.PORTS.reduce(
+          (result: {[key: string]: Object}, port) => {
+            result[`${port.container}/tcp`] = {}
+            return result
           },
+          {}
+        ),
+        HostConfig: {
+          PortBindings: config.PORTS.reduce(
+            (result: {[key: string]: Object}, port) => {
+              result[`${port.container}/tcp`] = [
+                {
+                  HostPort: port.host
+                }
+              ]
+              return result
+            },
+            {}
+          ),
           PublishAllPorts: true,
           AutoRemove: true,
           NetworkMode: 'bridge'

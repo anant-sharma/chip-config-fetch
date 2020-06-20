@@ -952,17 +952,19 @@ function deployService(config) {
                 },
                 data: {
                     Image: `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}:${config.TAG}`,
-                    ExposedPorts: {
-                        '8080/tcp': {}
-                    },
+                    ExposedPorts: config.PORTS.reduce((result, port) => {
+                        result[`${port.container}/tcp`] = {};
+                        return result;
+                    }, {}),
                     HostConfig: {
-                        PortBindings: {
-                            '8080/tcp': [
+                        PortBindings: config.PORTS.reduce((result, port) => {
+                            result[`${port.container}/tcp`] = [
                                 {
-                                    HostPort: `${config.HOST_PORT}`
+                                    HostPort: port.host
                                 }
-                            ]
-                        },
+                            ];
+                            return result;
+                        }, {}),
                         PublishAllPorts: true,
                         AutoRemove: true,
                         NetworkMode: 'bridge'
