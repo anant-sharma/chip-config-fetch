@@ -20,8 +20,7 @@ interface IConfig {
 
 async function run(): Promise<void> {
   try {
-    // const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
-    const REPOSITORY = 'anant-sharma/auth-service'
+    const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
     const ACCESS_TOKEN = core.getInput('access_token')
     const deploy = +core.getInput('deploy')
 

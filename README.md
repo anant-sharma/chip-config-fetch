@@ -21,7 +21,7 @@ Repository config
 ## Example usage
 
 ```
-uses: anant-sharma/chip-config-fetch@v1.2
+uses: anant-sharma/chip-config-fetch@v2.5
 id: configfetch
 with:
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}

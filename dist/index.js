@@ -858,8 +858,7 @@ const axios_1 = __importDefault(__webpack_require__(53));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const REPOSITORY = process.env.GITHUB_REPOSITORY || ''
-            const REPOSITORY = 'anant-sharma/auth-service';
+            const REPOSITORY = process.env.GITHUB_REPOSITORY || '';
             const ACCESS_TOKEN = core.getInput('access_token');
             const deploy = +core.getInput('deploy');
             // Authenticate With Config Service

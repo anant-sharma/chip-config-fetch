@@ -24,8 +24,6 @@ outputs:
     description: "Part of Config"
   CLUSTER_CONTAINER_NAME:
     description: "Part of Config"
-  HOST_PORT:
-    description: "Part of Config"
   SLACK_WEBHOOK:
     description: "Part of Config"
 runs:
