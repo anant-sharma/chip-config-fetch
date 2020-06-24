@@ -15,6 +15,7 @@ interface IConfig {
     container: string
   }[]
   SLACK_WEBHOOK: string
+  NETWORK_MODE: string
   [key: string]: string | Object[]
 }
 
@@ -147,7 +148,7 @@ async function deployService(config: IConfig): Promise<void> {
           ),
           PublishAllPorts: true,
           AutoRemove: true,
-          NetworkMode: 'bridge'
+          NetworkMode: config.NETWORK_MODE || 'bridge'
         },
         name: config.CLUSTER_CONTAINER_NAME
       }
