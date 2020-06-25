@@ -992,6 +992,7 @@ function createContainer(cAxios, config) {
                 AutoRemove: true,
                 NetworkMode: config.NETWORK_MODE || 'bridge'
             },
+            Env: config.ENV || [],
             name: config.CLUSTER_CONTAINER_NAME
         };
         core.debug(`Creating container with params ${JSON.stringify(params)}`);

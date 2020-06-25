@@ -20,6 +20,7 @@ interface IConfig {
   }[]
   SLACK_WEBHOOK: string
   NETWORK_MODE: string
+  ENV: string[]
   [key: string]: string | Object[]
 }
 
@@ -189,6 +190,7 @@ async function createContainer(
       AutoRemove: true,
       NetworkMode: config.NETWORK_MODE || 'bridge'
     },
+    Env: config.ENV || [],
     name: config.CLUSTER_CONTAINER_NAME
   }
 
