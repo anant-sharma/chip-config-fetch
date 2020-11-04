@@ -51,7 +51,7 @@ async function run(): Promise<void> {
 
 async function configServiceAuth(gitAccessToken: string): Promise<string> {
   const {data} = await axios
-    .post('https://config.chipserver.ml/auth/github', {
+    .post('https://config.chipserver.in/auth/github', {
       token: gitAccessToken
     })
     .catch(async (e: Error) => {
@@ -74,7 +74,7 @@ async function getRepoConfig(
   configServiceToken: string
 ): Promise<IConfig> {
   const {data} = await axios
-    .get(`https://config.chipserver.ml/api/v1/config/${repo}`, {
+    .get(`https://config.chipserver.in/api/v1/config/${repo}`, {
       headers: {
         Authorization: `Bearer ${configServiceToken}`
       }
