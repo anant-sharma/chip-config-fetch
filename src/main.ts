@@ -131,6 +131,7 @@ async function pullImage(
 ): Promise<AxiosResponse<INull>> {
   const fromImage = `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}`
   const tag = config.TAG
+  const platform = config.PLATFORM
 
   core.debug(`Pulling Image ${fromImage}:${tag}`)
 
@@ -139,6 +140,7 @@ async function pullImage(
     url: '/images/create',
     params: {
       fromImage,
+      platform,
       tag
     }
   })
