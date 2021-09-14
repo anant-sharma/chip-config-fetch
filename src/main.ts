@@ -111,13 +111,13 @@ async function deployService(config: IConfig): Promise<void> {
     await createContainer(cAxios, config)
     core.debug('Create New Container Complete')
 
-    // Start New Container
-    await startContainer(cAxios, config)
-    core.debug('Start New Container Complete')
-
     // Connect Container to Network
     await connectContainerToNetwork(cAxios, config)
     core.debug('Container Connected To Network')
+
+    // Start New Container
+    await startContainer(cAxios, config)
+    core.debug('Start New Container Complete')
 
     return
   } catch (e) {
