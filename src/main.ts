@@ -115,6 +115,10 @@ async function deployService(config: IConfig): Promise<void> {
     await startContainer(cAxios, config)
     core.debug('Start New Container Complete')
 
+    // Connect Container to Network
+    await connectContainerToNetwork(cAxios, config)
+    core.debug('Container Connected To Network')
+
     return
   } catch (e) {
     return Promise.reject(e)
@@ -186,7 +190,7 @@ async function createContainer(
         },
         {}
       ),
-      PublishAllPorts: true,
+      PublishAllPorts: config.PUBLISH_ALL_PORTS || false,
       AutoRemove: true,
       NetworkMode: config.NETWORK_MODE || 'bridge'
     },
@@ -216,6 +220,24 @@ async function startContainer(
     url: `/containers/${config.CLUSTER_CONTAINER_NAME}/start`,
     params: {},
     data: {}
+  })
+}
+
+async function connectContainerToNetwork(
+  cAxios: AxiosInstance,
+  config: IConfig
+): Promise<AxiosResponse<INull>> {
+  core.debug(
+    `Connecting Container ${config.CLUSTER_CONTAINER_NAME} to Network ${config.CONTAINER_NETWORK_NAME}`
+  )
+
+  return cAxios({
+    method: 'post',
+    url: `/networks/${config.CONTAINER_NETWORK_NAME}/connect`,
+    params: {},
+    data: {
+      Container: config.CLUSTER_CONTAINER_NAME
+    }
   })
 }
 
