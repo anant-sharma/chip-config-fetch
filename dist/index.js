@@ -929,12 +929,12 @@ function deployService(config) {
             // Create New Container
             yield createContainer(cAxios, config);
             core.debug('Create New Container Complete');
-            // Start New Container
-            yield startContainer(cAxios, config);
-            core.debug('Start New Container Complete');
             // Connect Container to Network
             yield connectContainerToNetwork(cAxios, config);
             core.debug('Container Connected To Network');
+            // Start New Container
+            yield startContainer(cAxios, config);
+            core.debug('Start New Container Complete');
             return;
         }
         catch (e) {
@@ -946,12 +946,14 @@ function pullImage(cAxios, config) {
     return __awaiter(this, void 0, void 0, function* () {
         const fromImage = `${config.DOCKER_USER}/${config.DOCKER_IMAGE_NAME}`;
         const tag = config.TAG;
+        const platform = config.PLATFORM;
         core.debug(`Pulling Image ${fromImage}:${tag}`);
         return cAxios({
             method: 'post',
             url: '/images/create',
             params: {
                 fromImage,
+                platform,
                 tag
             }
         });
@@ -1027,7 +1029,7 @@ function connectContainerToNetwork(cAxios, config) {
             url: `/networks/${config.CONTAINER_NETWORK_NAME}/connect`,
             params: {},
             data: {
-                Container: config.CLUSTER_CONTAINER_NAME,
+                Container: config.CLUSTER_CONTAINER_NAME
             }
         });
     });
